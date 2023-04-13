@@ -1,4 +1,4 @@
-// require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
@@ -11,7 +11,6 @@ const auth = require('./middlewares/auth');
 const { NotFoundError } = require('./errors/not-found-error');
 const { errorHandler } = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { URL_VALIDATION_RX } = require('./const');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -47,8 +46,6 @@ app.post('/signin', celebrate({
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(URL_VALIDATION_RX),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
