@@ -3,6 +3,7 @@ const Movie = require('../models/movie');
 const { NotFoundError } = require('../errors/not-found-error');
 const { ValidationError } = require('../errors/validation-error');
 const { ForbiddenError } = require('../errors/forbidden-error');
+const { ConflictError } = require('../errors/conflict-error');
 
 const SUCCESS = 200;
 const SUCCESS_CREATED = 201;
@@ -32,27 +33,34 @@ const createMovie = (req, res, next) => {
   } = req.body;
   const owner = req.user._id;
 
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner,
-  })
-    .then((movie) => movie.populate(['owner']).then((data) => res.status(SUCCESS_CREATED).send({ data })))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ValidationError(`Ошибка создания фильма, переданы некорректные данные: ${err}`));
+  Movie.findOne({ movieId, owner })
+    .then((foundMovie) => {
+      if (foundMovie !== null) {
+        next(new ConflictError('Этот фильм уже есть в вашем списке'));
         return;
       }
-      next(err);
+      Movie.create({
+        country,
+        director,
+        duration,
+        year,
+        description,
+        image,
+        trailerLink,
+        nameRU,
+        nameEN,
+        thumbnail,
+        movieId,
+        owner,
+      })
+        .then((movie) => movie.populate(['owner']).then((data) => res.status(SUCCESS_CREATED).send({ data })))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new ValidationError(`Ошибка создания фильма, переданы некорректные данные: ${err}`));
+            return;
+          }
+          next(err);
+        });
     });
 };
 
