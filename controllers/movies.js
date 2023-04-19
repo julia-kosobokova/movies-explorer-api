@@ -9,7 +9,7 @@ const SUCCESS_CREATED = 201;
 
 // Поиск всех сохраненных текущим пользователем фильмов
 const findMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .populate(['owner'])
     .then((movie) => res.status(SUCCESS).send({ data: movie }))
     .catch(next);

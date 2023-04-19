@@ -8,6 +8,7 @@ const cors = require('cors');
 const router = require('./routes');
 
 const { login, createUser } = require('./controllers/users');
+const limiter = require('./utils/limiter');
 const auth = require('./middlewares/auth');
 const { NotFoundError } = require('./errors/not-found-error');
 const { errorHandler } = require('./middlewares/error-handler');
@@ -17,6 +18,8 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { PORT = 3000, DB_ADDRESS = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 
 const app = express();
+// подключаем rate-limiter
+// app.use(limiter);
 app.use(helmet());
 app.use(cors());
 
