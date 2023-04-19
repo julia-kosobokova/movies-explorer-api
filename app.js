@@ -1,14 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const cors = require('cors');
 const router = require('./routes');
 
 const { login, createUser } = require('./controllers/users');
-const limiter = require('./utils/limiter');
+const { loginValidation, createUserValidation } = require('./middlewares/validation');
+const { limiter } = require('./utils/limiter');
 const auth = require('./middlewares/auth');
 const { NotFoundError } = require('./errors/not-found-error');
 const { errorHandler } = require('./middlewares/error-handler');
@@ -19,7 +19,7 @@ const { PORT = 3000, DB_ADDRESS = 'mongodb://localhost:27017/bitfilmsdb' } = pro
 
 const app = express();
 // подключаем rate-limiter
-// app.use(limiter);
+app.use(limiter);
 app.use(helmet());
 app.use(cors());
 
@@ -41,20 +41,9 @@ app.get('/crash-test', () => {
 });
 
 // Роуты, которым не нужна авторизация
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), login);
+app.post('/signin', loginValidation, login);
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), createUser);
+app.post('/signup', createUserValidation, createUser);
 
 app.use(auth);
 app.use('/', router); // Роуты, которым нужна авторизация
