@@ -24,7 +24,7 @@ const createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     nameRU,
     nameEN,
     thumbnail,
@@ -39,7 +39,7 @@ const createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     nameRU,
     nameEN,
     thumbnail,
@@ -58,7 +58,7 @@ const createMovie = (req, res, next) => {
 
 // Удаление сохраненного фильма по идентификатору
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findById(req.params._id)
     .populate(['owner'])
     .then((movie) => {
       if (movie === null) {
