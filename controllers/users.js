@@ -6,7 +6,7 @@ const { NotFoundError } = require('../errors/not-found-error');
 const { ValidationError } = require('../errors/validation-error');
 const { ConflictError } = require('../errors/conflict-error');
 const { UnauthorizedError } = require('../errors/unauthorized-error');
-const { JWT_SECRET } = require('../const');
+const { JWT_SECRET } = require('../config');
 
 const SUCCESS = 200;
 const SUCCESS_CREATED = 201;
