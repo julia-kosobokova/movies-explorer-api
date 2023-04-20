@@ -10,10 +10,9 @@ const {
   CANNOT_DELETE_MOVIE_MESSAGE,
   MOVIE_CREATE_ERR_MESSAGE,
   INCORRECT_DATA_MESSAGE,
+  SUCCESS,
+  SUCCESS_CREATED,
 } = require('../const');
-
-const SUCCESS = 200;
-const SUCCESS_CREATED = 201;
 
 // Поиск всех сохраненных текущим пользователем фильмов
 const findMovies = (req, res, next) => {

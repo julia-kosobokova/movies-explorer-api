@@ -1,5 +1,8 @@
 const URL_VALIDATION_RX = /https?:\/\/(www\.)?[\w\-.]+\.\w{2,}([\w\-._~:/?#[\]@!$&'()*+,;=]+)?/;
 
+const SUCCESS = 200;
+const SUCCESS_CREATED = 201;
+
 // Сообщения ответов и ошибок
 const SERVER_ERR = 'На сервере произошла ошибка';
 const SERVER_WILL_CRASH_MESSAGE = 'Сервер сейчас упадёт';
@@ -21,6 +24,8 @@ const INVALID_URL_MESSAGE = 'Недопустимый URL!';
 
 module.exports = {
   URL_VALIDATION_RX,
+  SUCCESS,
+  SUCCESS_CREATED,
   SERVER_ERR,
   SERVER_WILL_CRASH_MESSAGE,
   LISTENING_ON_PORT,

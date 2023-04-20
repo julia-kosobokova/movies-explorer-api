@@ -13,10 +13,9 @@ const {
   INCORRECT_EMAIL_OR_PASSWORD_MESSAGE,
   USER_CREATE_ERR_MESSAGE,
   USER_UPDATE_ERR_MESSAGE,
+  SUCCESS,
+  SUCCESS_CREATED,
 } = require('../const');
-
-const SUCCESS = 200;
-const SUCCESS_CREATED = 201;
 
 // Создание нового пользователя
 const createUser = (req, res, next) => {
