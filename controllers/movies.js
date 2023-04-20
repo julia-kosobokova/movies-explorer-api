@@ -4,6 +4,13 @@ const { NotFoundError } = require('../errors/not-found-error');
 const { ValidationError } = require('../errors/validation-error');
 const { ForbiddenError } = require('../errors/forbidden-error');
 const { ConflictError } = require('../errors/conflict-error');
+const {
+  MOVIE_EXISTS_MESSAGE,
+  MOVIE_NOT_FOUND_MESSAGE,
+  CANNOT_DELETE_MOVIE_MESSAGE,
+  MOVIE_CREATE_ERR_MESSAGE,
+  INCORRECT_DATA_MESSAGE,
+} = require('../const');
 
 const SUCCESS = 200;
 const SUCCESS_CREATED = 201;
@@ -36,7 +43,7 @@ const createMovie = (req, res, next) => {
   Movie.findOne({ movieId, owner })
     .then((foundMovie) => {
       if (foundMovie !== null) {
-        next(new ConflictError('Этот фильм уже есть в вашем списке'));
+        next(new ConflictError(MOVIE_EXISTS_MESSAGE));
         return;
       }
       Movie.create({
@@ -56,7 +63,7 @@ const createMovie = (req, res, next) => {
         .then((movie) => movie.populate(['owner']).then((data) => res.status(SUCCESS_CREATED).send({ data })))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(new ValidationError(`Ошибка создания фильма, переданы некорректные данные: ${err}`));
+            next(new ValidationError(`${MOVIE_CREATE_ERR_MESSAGE}: ${err}`));
             return;
           }
           next(err);
@@ -70,17 +77,17 @@ const deleteMovie = (req, res, next) => {
     .populate(['owner'])
     .then((movie) => {
       if (movie === null) {
-        return next(new NotFoundError('Фильм не найден'));
+        return next(new NotFoundError(MOVIE_NOT_FOUND_MESSAGE));
       }
       if (movie.owner._id.toString() !== req.user._id) {
-        return next(new ForbiddenError('Удаление чужого фильма не допускается'));
+        return next(new ForbiddenError(CANNOT_DELETE_MOVIE_MESSAGE));
       }
       return movie.deleteOne()
         .then((data) => res.status(SUCCESS).send({ data }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new ValidationError(`Переданы некорректные данные: ${err}`));
+        return next(new ValidationError(`${INCORRECT_DATA_MESSAGE}: ${err}`));
       }
       return next(err);
     });

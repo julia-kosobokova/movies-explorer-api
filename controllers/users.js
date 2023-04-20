@@ -7,6 +7,13 @@ const { ValidationError } = require('../errors/validation-error');
 const { ConflictError } = require('../errors/conflict-error');
 const { UnauthorizedError } = require('../errors/unauthorized-error');
 const { JWT_SECRET } = require('../config');
+const {
+  USER_EXISTS_MESSAGE,
+  USER_NOT_FOUND_MESSAGE,
+  INCORRECT_EMAIL_OR_PASSWORD_MESSAGE,
+  USER_CREATE_ERR_MESSAGE,
+  USER_UPDATE_ERR_MESSAGE,
+} = require('../const');
 
 const SUCCESS = 200;
 const SUCCESS_CREATED = 201;
@@ -35,11 +42,11 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError(`Ошибка создания пользователя, переданы некорректные данные: ${err}`));
+        next(new ValidationError(`${USER_CREATE_ERR_MESSAGE}: ${err}`));
         return;
       }
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
+        next(new ConflictError(USER_EXISTS_MESSAGE));
         return;
       }
       next(err);
@@ -60,14 +67,14 @@ const updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (user === null) {
-        next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError(USER_NOT_FOUND_MESSAGE));
         return;
       }
       res.status(SUCCESS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError(`Ошибка обновления пользователя, переданы некорректные данные: ${err}`));
+        next(new ValidationError(`${USER_UPDATE_ERR_MESSAGE}: ${err}`));
         return;
       }
       next(err);
@@ -79,12 +86,12 @@ const login = (req, res, next) => {
 
   User
     .findOne({ email }).select('+password')
-    .orFail(() => { throw new UnauthorizedError('Неправильные имя пользователя или пароль'); })
+    .orFail(() => { throw new UnauthorizedError(INCORRECT_EMAIL_OR_PASSWORD_MESSAGE); })
     .then((user) => bcrypt.compare(password, user.password).then((matched) => {
       if (matched) {
         return user;
       }
-      next(new UnauthorizedError('Неправильные имя пользователя или пароль'));
+      next(new UnauthorizedError(INCORRECT_EMAIL_OR_PASSWORD_MESSAGE));
       return user;
     }))
     .then((user) => {

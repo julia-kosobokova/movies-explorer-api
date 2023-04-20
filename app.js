@@ -14,9 +14,8 @@ const { NotFoundError } = require('./errors/not-found-error');
 const { errorHandler } = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-// Слушаем 3000 порт
-// const { PORT = 3000, DB_ADDRESS = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 const { PORT, DB_ADDRESS } = require('./config');
+const { SERVER_WILL_CRASH_MESSAGE, PAGE_NOT_FOUND_MESSAGE, LISTENING_ON_PORT } = require('./const');
 
 const app = express();
 app.use(limiter);
@@ -36,7 +35,7 @@ app.use(requestLogger); // подключаем логгер запросов
 // Краш-тест сервера
 app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
+    throw new Error(SERVER_WILL_CRASH_MESSAGE);
   }, 0);
 });
 
@@ -49,7 +48,7 @@ app.use(auth);
 app.use('/', router); // Роуты, которым нужна авторизация
 
 app.use((req, res, next) => {
-  next(new NotFoundError('Страница по указанному маршруту не найдена'));
+  next(new NotFoundError(PAGE_NOT_FOUND_MESSAGE));
 });
 
 app.use(errorLogger);
@@ -58,5 +57,5 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${PORT}`);
+  console.log(`${LISTENING_ON_PORT} ${PORT}`);
 });

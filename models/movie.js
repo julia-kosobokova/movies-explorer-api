@@ -30,7 +30,7 @@ const movieSchema = new mongoose.Schema({
         const rx = URL_VALIDATION_RX;
         return rx.test(v);
       },
-      message: (props) => `${props.value} is not a valid URL!`,
+      message: (props) => `${props.value} недопустимый URL!`,
     },
   },
   trailerLink: {
@@ -41,7 +41,7 @@ const movieSchema = new mongoose.Schema({
         const rx = URL_VALIDATION_RX;
         return rx.test(v);
       },
-      message: (props) => `${props.value} is not a valid URL!`,
+      message: (props) => `${props.value} недопустимый URL!`,
     },
   },
   thumbnail: {
@@ -52,7 +52,7 @@ const movieSchema = new mongoose.Schema({
         const rx = URL_VALIDATION_RX;
         return rx.test(v);
       },
-      message: (props) => `${props.value} is not a valid URL!`,
+      message: (props) => `${props.value} недопустимый URL!`,
     },
   },
   owner: {
