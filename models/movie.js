@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { URL_VALIDATION_RX } = require('../const');
+const { URL_VALIDATION_RX, INVALID_URL_MESSAGE } = require('../const');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -30,7 +30,7 @@ const movieSchema = new mongoose.Schema({
         const rx = URL_VALIDATION_RX;
         return rx.test(v);
       },
-      message: (props) => `${props.value} недопустимый URL!`,
+      message: (props) => `${props.value} ${INVALID_URL_MESSAGE}`,
     },
   },
   trailerLink: {
@@ -41,7 +41,7 @@ const movieSchema = new mongoose.Schema({
         const rx = URL_VALIDATION_RX;
         return rx.test(v);
       },
-      message: (props) => `${props.value} недопустимый URL!`,
+      message: (props) => `${props.value} ${INVALID_URL_MESSAGE}`,
     },
   },
   thumbnail: {
@@ -52,7 +52,7 @@ const movieSchema = new mongoose.Schema({
         const rx = URL_VALIDATION_RX;
         return rx.test(v);
       },
-      message: (props) => `${props.value} недопустимый URL!`,
+      message: (props) => `${props.value} ${INVALID_URL_MESSAGE}`,
     },
   },
   owner: {

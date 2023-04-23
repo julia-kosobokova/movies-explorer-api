@@ -3,10 +3,8 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const cors = require('cors');
-const router = require('./routes');
+const { router, publicRouter } = require('./routes');
 
-const { login, createUser } = require('./controllers/users');
-const { loginValidation, createUserValidation } = require('./middlewares/validation');
 const { limiter } = require('./utils/limiter');
 const auth = require('./middlewares/auth');
 const { NotFoundError } = require('./errors/not-found-error');
@@ -17,7 +15,6 @@ const { PORT, DB_ADDRESS } = require('./config');
 const { SERVER_WILL_CRASH_MESSAGE, PAGE_NOT_FOUND_MESSAGE, LISTENING_ON_PORT } = require('./const');
 
 const app = express();
-app.use(limiter);
 app.use(helmet());
 app.use(cors());
 
@@ -30,6 +27,7 @@ mongoose.connect(DB_ADDRESS, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger); // подключаем логгер запросов
+app.use(limiter);
 
 // Краш-тест сервера
 app.get('/crash-test', () => {
@@ -38,11 +36,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-// Роуты, которым не нужна авторизация
-app.post('/signin', loginValidation, login);
-
-app.post('/signup', createUserValidation, createUser);
-
+app.use('/', publicRouter); // Роуты, которым не нужна авторизация
 app.use(auth);
 app.use('/', router); // Роуты, которым нужна авторизация
 

@@ -76,10 +76,15 @@ const updateUser = (req, res, next) => {
         next(new ValidationError(`${USER_UPDATE_ERR_MESSAGE}: ${err}`));
         return;
       }
+      if (err.code === 11000) {
+        next(new ConflictError(USER_EXISTS_MESSAGE));
+        return;
+      }
       next(err);
     });
 };
 
+// Логин
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -95,8 +100,10 @@ const login = (req, res, next) => {
     }))
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      const userObject = user.toObject();
+      delete userObject.password;
       res.send({
-        user,
+        userObject,
         token,
       });
     })
