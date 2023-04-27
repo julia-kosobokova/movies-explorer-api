@@ -1,14 +1,18 @@
 const router = require('express').Router();
-const publicRouter = require('express').Router();
 
-const { router: routerUsers, publicRouter: publicRouterUsers } = require('./users');
+const routerUsers = require('./users');
 const routerMovies = require('./movies');
+const { loginValidation, createUserValidation } = require('../middlewares/validation');
+const { login, createUser } = require('../controllers/users');
+const auth = require('../middlewares/auth');
 
+// Роуты, которым не нужна авторизация
+router.post('/signin', loginValidation, login);
+router.post('/signup', createUserValidation, createUser);
+
+// Роуты, которым нужна авторизация
+router.use(auth);
 router.use('/users', routerUsers);
 router.use('/movies', routerMovies);
-publicRouter.use('/', publicRouterUsers);
 
-module.exports = {
-  router,
-  publicRouter,
-}; // экспортировали роутеры
+module.exports = router; // экспортировали роутеры

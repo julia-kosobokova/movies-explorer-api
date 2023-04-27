@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const cors = require('cors');
-const { router, publicRouter } = require('./routes');
+// const { router, publicRouter } = require('./routes');
+const routes = require('./routes');
 
 const { limiter } = require('./utils/limiter');
-const auth = require('./middlewares/auth');
+// const auth = require('./middlewares/auth');
 const { NotFoundError } = require('./errors/not-found-error');
 const { errorHandler } = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -36,9 +37,9 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use('/', publicRouter); // Роуты, которым не нужна авторизация
-app.use(auth);
-app.use('/', router); // Роуты, которым нужна авторизация
+// app.use('/', publicRouter); // Роуты, которым не нужна авторизация
+// app.use(auth);
+app.use('/', routes); // Роуты, которым нужна авторизация
 
 app.use((req, res, next) => {
   next(new NotFoundError(PAGE_NOT_FOUND_MESSAGE));

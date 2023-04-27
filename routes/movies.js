@@ -8,9 +8,7 @@ const {
 } = require('../controllers/movies');
 
 router.get('/', findMovies); // возвращает все сохраненные текущим пользователем фильмы
-
 router.post('/', createMovieValidation, createMovie); // создает фильм
-
 router.delete('/:_id', deleteMovieValidation, deleteMovie); // удаляет сохраненный фильм по id
 
 module.exports = router; // экспортировали роутер
